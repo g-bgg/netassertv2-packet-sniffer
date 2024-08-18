@@ -3,7 +3,8 @@ COPY . /build
 WORKDIR /build
 RUN apk add --no-cache build-base libpcap-dev && \
     go mod download && \
-    go test -race -v ./... && \
+    if [ $(arch) == "x86_64" ]; then go test -race -v ./...; else go test -v ./...; fi && \
+    #go test -race -v ./... && \
     # we need to enable CGO as we need to compile with libpcap bindings
     GO111MODULE=on CGO_ENABLED=1 GOOS=linux go build -v -o /packet-capture .
 
